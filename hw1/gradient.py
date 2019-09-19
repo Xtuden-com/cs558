@@ -17,12 +17,15 @@ def gradientInfo(x_gradient, y_gradient, threshold):
                     direction[i][j] = numpy.arctan(y_gradient[i][j]/x_gradient[i][j])
     return magnitude,direction
 
-
+# check if your center is the max value
 def maxValue(ret,magnitude,row,col,x,y):
     if magnitude[row+x][col+y] > magnitude[row][col] or magnitude[row-x][col-y] > magnitude[row][col]:
+        ret[row][col] = 0
+    else:
         ret[row][col] = magnitude[row][col]
 
 def nonMaxSuppression(magnitude,direction,threshold):
+    #pad by 1 so we cant check a 3x3 square for the max
     clip.padImage(magnitude,1)
     x_size, y_size = magnitude.shape   
     ret = numpy.zeros(magnitude.shape)
