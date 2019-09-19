@@ -14,7 +14,8 @@ def convulve2d(image, kernel):
             # loop through the kernel itself
             for i in range(-1 *  padding_x, padding_x + 1):
                 for j in range(-1 * padding_y , padding_y + 1):
-                    total += kernel[i + padding_x][j + padding_y] * image[row + i][column + j]
+                    # make kernel[-1,-1] multiplied by image[1,1]
+                    total += kernel[padding_x + i][padding_y + j] * image[row - i][column - j]
             ret_image[row][column] = total
     return ret_image
 
@@ -43,6 +44,7 @@ def convulveGaussian(image,std_deviation):
     image = convulve1d(image.T,gaussian).T
     return image
 
+# 1d convolution
 def convulve1d(image, linear_filter):
     x_size , y_size = image.shape
     ret_image = numpy.zeros(image.shape)
