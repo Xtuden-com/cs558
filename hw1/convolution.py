@@ -39,6 +39,8 @@ def convulveGaussian(image,std_deviation):
         print('')
     print(total)
     """
+    #matrix = numpy.outer(gaussian,gaussian)
+    #image = convulve2d(image,matrix)
     # Convulve 1d twice
     image = convulve1d(image,gaussian)
     image = convulve1d(image.T,gaussian).T

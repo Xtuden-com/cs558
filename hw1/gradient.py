@@ -24,7 +24,7 @@ def maxValue(ret,magnitude,row,col,x,y):
     else:
         ret[row][col] = magnitude[row][col]
 
-def nonMaxSuppression(magnitude,direction,threshold):
+def nonMaxSuppression(magnitude,direction):
     #pad by 1 so we cant check a 3x3 square for the max
     clip.padImage(magnitude,1)
     x_size, y_size = magnitude.shape   
