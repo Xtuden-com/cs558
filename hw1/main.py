@@ -1,7 +1,6 @@
 import imageio 
 import sys
 import matplotlib.pyplot as plt
-import clip
 import convolution
 import numpy
 import gradient
@@ -12,16 +11,11 @@ if __name__ == "__main__":
         exit(1)
     image = imageio.imread(sys.argv[1])
     std_deviation = int(sys.argv[2])
-    image = clip.padImage(image,std_deviation * 3)  
     sobel = numpy.array([[-1,0,1],[-2,0,2],[-1,0,1]])
     image = convolution.convulveGaussian(image,std_deviation)
-    #image = clip.clipImage(image,std_deviation*3)
-    #image = clip.padImage(image,1)
     x_image = convolution.convulve2d(image,sobel)      
     y_image = convolution.convulve2d(image,sobel.T) 
     magnitude, direction = gradient.gradientInfo(x_image,y_image,90)
-    magnitude = clip.clipImage(magnitude,std_deviation * 3)
-    direction = clip.clipImage(direction,std_deviation * 3)
     image = gradient.nonMaxSuppression(magnitude,direction)
     plt.imshow(image,cmap=plt.get_cmap(name="gray"))
     plt.show()        
