@@ -1,21 +1,27 @@
 import imageio 
 import sys
 import matplotlib.pyplot as plt
-from clip import padImage, clipImage
+import clip
 import convolution
 import numpy
 import gradient
 
 if __name__ == "__main__":
+    if (len(sys.argv) != 3):
+        print("Usage: python main.py file/path/to/image std_deviation")
+        exit(1)
     image = imageio.imread(sys.argv[1])
-    image = padImage(image,3)
+    std_deviation = int(sys.argv[2])
+    image = clip.padImage(image,std_deviation * 3)  
     sobel = numpy.array([[-1,0,1],[-2,0,2],[-1,0,1]])
-    image = convolution.convulveGaussian(image,1)
-    image = clipImage(image,3)
-    image = padImage(image,1)
-    x_image = clipImage(convolution.convulve2d(image,sobel),1)
-    y_image = clipImage(convolution.convulve2d(image,sobel.T),1)
-    magnitude, direction = gradient.gradientInfo(x_image,y_image,60)
+    image = convolution.convulveGaussian(image,std_deviation)
+    #image = clip.clipImage(image,std_deviation*3)
+    #image = clip.padImage(image,1)
+    x_image = convolution.convulve2d(image,sobel)      
+    y_image = convolution.convulve2d(image,sobel.T) 
+    magnitude, direction = gradient.gradientInfo(x_image,y_image,90)
+    magnitude = clip.clipImage(magnitude,std_deviation * 3)
+    direction = clip.clipImage(direction,std_deviation * 3)
     image = gradient.nonMaxSuppression(magnitude,direction)
     plt.imshow(image,cmap=plt.get_cmap(name="gray"))
     plt.show()        

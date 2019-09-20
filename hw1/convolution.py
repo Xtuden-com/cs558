@@ -1,10 +1,9 @@
 import numpy
-import functools
 
 # Convulution function for general odd dimensional kernels
 def convulve2d(image, kernel):
     x_size, y_size = image.shape
-    ret_image = numpy.zeros(image.shape)
+    ret_image = numpy.copy(image)
     padding_x = kernel.shape[0]//2
     padding_y = kernel.shape[1]//2
     # loop through the actual image without padding
@@ -18,9 +17,6 @@ def convulve2d(image, kernel):
                     total += kernel[padding_x + i][padding_y + j] * image[row - i][column - j]
             ret_image[row][column] = total
     return ret_image
-
-# Used to verify sum is 1
-def sum(x1,x2): return x1 + x2
 
 def convulveGaussian(image,std_deviation):
     # gaussian of 3 std deviations of the mean
@@ -49,7 +45,7 @@ def convulveGaussian(image,std_deviation):
 # 1d convolution
 def convulve1d(image, linear_filter):
     x_size , y_size = image.shape
-    ret_image = numpy.zeros(image.shape)
+    ret_image = numpy.copy(image)
     padding = len(linear_filter) // 2 
     # iterate each pixel
     for row in range(padding,x_size-padding):
