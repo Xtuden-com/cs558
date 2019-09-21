@@ -1,5 +1,6 @@
 import numpy
 import clip
+import math
 
 def gradientInfo(x_gradient, y_gradient, threshold):
     x_size, y_size = x_gradient.shape
@@ -11,10 +12,7 @@ def gradientInfo(x_gradient, y_gradient, threshold):
             # threshold
             if (distance > threshold):
                 magnitude[i][j] = distance
-                if x_gradient[i][j] == 0:
-                    direction[i][j] = 1.57
-                else:
-                    direction[i][j] = numpy.arctan(y_gradient[i][j]/x_gradient[i][j])
+    direction = numpy.arctan2(y_gradient,x_gradient) * 180 / numpy.pi
     return magnitude,direction
 
 # check if your center is the max value
@@ -31,19 +29,21 @@ def nonMaxSuppression(magnitude,direction):
     ret = numpy.zeros(magnitude.shape)
     for row in range(1,x_size-1):
         for col in range(1,y_size-1):
-            # up and down check left and right
-            if (direction[row][col] >= -1* numpy.pi/2 and direction[row][col] <= -3 * numpy.pi/8 or \
-            direction[row][col] <= numpy.pi/2 and direction[row][col] > 3* numpy.pi / 8):
-                maxValue(ret,magnitude,row,col,1,0)
-            # bottom right and top left
-            if (direction[row][col] > -3 * numpy.pi/8 and direction[row][col] <= -1 * numpy.pi/8):
-                maxValue(ret,magnitude,row,col,1,1)
+            c_direction = direction[row][col]
             # horizontal
-            if (direction[row][col] > -1*numpy.pi/8 and direction[row][col] <= numpy.pi/8):
-                maxValue(ret,magnitude,row,col,0,1)
+            if c_direction > -22.5 and c_direction <= 22.5 or \
+            c_direction > 157.5 and c_direction <= -157.5:
+                maxValue(ret,magnitude,row,col,1,0)
             # top right and bottom left
-            if (direction[row][col] > numpy.pi/8 and direction[row][col] <= 3*numpy.pi/8):
-                maxValue(ret,magnitude,row,col,-1,1)
+            elif c_direction > 22.5 and c_direction <= 67.5 or \
+            c_direction > -157.5 and c_direction <= -112.5:
+                maxValue(ret,magnitude,row,col,1,1)
+            # vertical
+            elif c_direction > 67.5 and c_direction < 112.5 or \
+            c_direction > -112.5 and c_direction < -67.5:
+                maxValue(ret,magnitude,row,col,1,0)
+            else:
+                maxValue(ret,magnitude,row,col,1,-1)
     clip.clipImage(ret,1)
     clip.clipImage(magnitude,1)
     return ret

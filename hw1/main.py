@@ -17,5 +17,7 @@ if __name__ == "__main__":
     y_image = convolution.convulve2d(image,sobel.T) 
     magnitude, direction = gradient.gradientInfo(x_image,y_image,90)
     image = gradient.nonMaxSuppression(magnitude,direction)
+    imageio.imsave("results/red_non_maxsuppression.jpg",image)
     plt.imshow(image,cmap=plt.get_cmap(name="gray"))
     plt.show()        
+    
