@@ -21,4 +21,3 @@ if __name__ == "__main__":
     image = gradient.nonMaxSuppression(magnitude,direction)
     plt.imshow(image,cmap=plt.get_cmap(name="gray"))
     plt.show()        
-    
