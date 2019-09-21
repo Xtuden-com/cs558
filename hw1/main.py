@@ -13,7 +13,7 @@ if __name__ == "__main__":
     std_deviation = int(sys.argv[2])
     sobel = numpy.array([[-1,0,1],[-2,0,2],[-1,0,1]])
     image = convolution.convulveGaussian(image,std_deviation)
-    x_image = convolution.convulve2d(image,sobel)      
+    x_image = convolution.convulve2d(image,sobel)   
     y_image = convolution.convulve2d(image,sobel.T) 
     magnitude, direction = gradient.gradientInfo(x_image,y_image,90)
     image = gradient.nonMaxSuppression(magnitude,direction)

@@ -31,19 +31,19 @@ def nonMaxSuppression(magnitude,direction):
     ret = numpy.zeros(magnitude.shape)
     for row in range(1,x_size-1):
         for col in range(1,y_size-1):
-            # up and down
+            # up and down check left and right
             if (direction[row][col] >= -1* numpy.pi/2 and direction[row][col] <= -3 * numpy.pi/8 or \
             direction[row][col] <= numpy.pi/2 and direction[row][col] > 3* numpy.pi / 8):
-                maxValue(ret,magnitude,row,col,0,1)
+                maxValue(ret,magnitude,row,col,1,0)
             # bottom right and top left
             if (direction[row][col] > -3 * numpy.pi/8 and direction[row][col] <= -1 * numpy.pi/8):
-                maxValue(ret,magnitude,row,col,1,-1)
+                maxValue(ret,magnitude,row,col,1,1)
             # horizontal
             if (direction[row][col] > -1*numpy.pi/8 and direction[row][col] <= numpy.pi/8):
-                maxValue(ret,magnitude,row,col,1,0)
+                maxValue(ret,magnitude,row,col,0,1)
             # top right and bottom left
             if (direction[row][col] > numpy.pi/8 and direction[row][col] <= 3*numpy.pi/8):
-                maxValue(ret,magnitude,row,col,1,1)
+                maxValue(ret,magnitude,row,col,-1,1)
     clip.clipImage(ret,1)
     clip.clipImage(magnitude,1)
     return ret

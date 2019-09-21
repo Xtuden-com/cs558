@@ -24,27 +24,15 @@ def convulve2d(image, kernel):
 def convulveGaussian(image,std_deviation):
     # gaussian of 3 std deviations of the mean
     padding = std_deviation * 3
-    #image = clip.padImage(image,padding)
     # 1d gaussian
-    gaussian = [(std_deviation ** -1) * (2 * numpy.pi) ** (-1/2) * numpy.exp((-1/2) * (x/std_deviation)**2) \
+    gaussian = [(std_deviation ** -1) * (2 * numpy.pi) ** (-1/2) * \
+    numpy.exp((-1/2) * (x/std_deviation)**2) \
     for x in range(-1 * padding, padding+1)]
-    # verify Gaussian size is 1
-    """
-    total = 0
-    matrix = numpy.outer(gaussian,gaussian)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            total += matrix[i][j]
-            print(matrix[i][j], " ",end='')
-        print('')
-    print(total)
-    """
-    matrix = numpy.outer(gaussian,gaussian)
-    image = convulve2d(image,matrix)
     # Convulve 1d twice
-    #image = convulve1d(image,gaussian)
-    #image = convulve1d(image.T,gaussian).T
-    #image = clip.clipImage(image,padding)
+    image = clip.padImage(image,padding)
+    image = convulve1d(image,gaussian)
+    image = convulve1d(image.T,gaussian).T
+    image = clip.clipImage(image,padding)
     return image
 
 # 1d convolution
