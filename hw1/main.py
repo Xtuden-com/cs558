@@ -5,7 +5,6 @@ import convolution
 import numpy
 import gradient
 
-
 #I pledge my honor that I have abided by the Stevens Honor System. VL
 if __name__ == "__main__":
     if (len(sys.argv) != 3):
