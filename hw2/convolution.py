@@ -1,5 +1,6 @@
 import numpy
 import clip
+
 # Convulution function for general odd dimensional kernels
 def convulve2d(image, kernel):
     padding_x = kernel.shape[0]//2
@@ -31,7 +32,7 @@ def convulveGaussian(image,std_deviation):
     # form the 2d matrix
     gaussian = numpy.outer(gaussian,gaussian)
     total = sum(map(sum,gaussian))
-    # normalize to ensure 1 as the total of the gaussian
+    # normalize to ensure 1 as the total of the gaussian filter
     gaussian /= total
     image = convulve2d(image,gaussian)
     return image
