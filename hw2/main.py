@@ -17,17 +17,27 @@ if __name__ == "__main__":
     plt.imshow(image, cmap='gray')
     plt.show()
     # threshold the values chose 30 as that seems to remove the most gray points
-    image = hessian.threshold(image,30)
+    image = hessian.threshold(image,40)
     # perform non max suprression on 3x3 surrounding pixels
     image = hessian.nonMaxSuppression(image)
+    imageio.imwrite('hessian.png',image)
     # ransac on threshold 2 and minimum of 16 inliers
     """
     image = imageio.imread('hessian.png')
-    ransac_image = ransac(image, 3, 20)
-    """
+    #ransac_image = ransac(image, 2, 15)
+    image = numpy.array([[0 for _ in range(180)] for _ in range(180)])
+    
+    #for i in range(0,180,60):
+    #   image[i][i] = 255
+        #image[-i][i] = 255
+    image[90][90] = 255
+    plt.imshow(image, cmap='gray')
+    plt.show()  
     hough_image = hough(image,360,360)
     plt.imshow(hough_image, cmap='gray')
     plt.show()  
+    
     """
     plt.imshow(ransac_image, cmap='gray')
     plt.show()
+    """
