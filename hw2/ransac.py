@@ -30,9 +30,11 @@ def find_line(image,points, threshold, inliers):
     slope = 0
     intercept = 0
     iterations = 0
+    horizontal = False
     
     while len(removal_set) < inliers:
         removal_set = []
+        horizontal = False
         # generate the two random points
         first_point = numpy.random.randint(len(points))
         second_point = first_point
@@ -48,8 +50,9 @@ def find_line(image,points, threshold, inliers):
             for point in points:
                 if abs(point[1] - (slope * point[0] + intercept)) <= threshold:
                     removal_set.append(point)
-        # if vertical only compare x movement
+        # if horizontal movement
         else:
+            horizontal = True
             slope = 0 
             intercept = second_point[0]
             for point in points:
@@ -71,7 +74,7 @@ def find_line(image,points, threshold, inliers):
         points.remove(point)
 
     # draw the line
-    if slope != 0:
+    if not horizontal:
         for i in range(image.shape[0]):
             target = slope * i + intercept
             if target >= 0 and target < image.shape[1]:
