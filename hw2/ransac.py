@@ -29,6 +29,7 @@ def find_line(image,points, threshold, inliers):
     removal_set = []
     slope = 0
     intercept = 0
+    iterations = 0
     
     while len(removal_set) < inliers:
         removal_set = []
@@ -40,10 +41,10 @@ def find_line(image,points, threshold, inliers):
         first_point = points[first_point]
         second_point = points[second_point]
 
-        # if the slope is not vertical
-        if abs(second_point[0] - first_point[0]) > 1:
+        # if the slope is not horizontal
+        if second_point[0] - first_point[0] != 0:
             slope = (second_point[1]-first_point[1]) / (second_point[0] - first_point[0])
-            intercept = second_point[1] - slope * second_point[0]
+            intercept = int(second_point[1] - slope * second_point[0])
             for point in points:
                 if abs(point[1] - (slope * point[0] + intercept)) <= threshold:
                     removal_set.append(point)
@@ -61,8 +62,9 @@ def find_line(image,points, threshold, inliers):
             N = numpy.log(1-p) / numpy.log(1-(1-e)**num_of_points)
         sample_count+=1
         """
+        iterations+=1
 
-    print(len(removal_set), len(points), slope, intercept)
+    print(len(removal_set), len(points), slope, intercept,iterations)
     # remove the points in the target set and highlight the inliers
     for point in removal_set:
         image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
