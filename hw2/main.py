@@ -24,20 +24,32 @@ if __name__ == "__main__":
     # ransac on threshold 2 and minimum of 16 inliers
     """
     image = imageio.imread('hessian.png')
-    #ransac_image = ransac(image, 2, 15)
-    image = numpy.array([[0 for _ in range(180)] for _ in range(180)])
     
-    #for i in range(0,180,60):
-    #   image[i][i] = 255
-        #image[-i][i] = 255
-    image[90][90] = 255
+    image = numpy.array([[0 for _ in range(101)] for _ in range(101)])
+    for i in range(0,101, 1):
+       image[i][i] = 1
+       image[i][100-i] = 1
+    
+    #image[5][5] = 255
     plt.imshow(image, cmap='gray')
     plt.show()  
-    hough_image = hough(image,360,360)
+    hough_image = hough(image,200,200)
     plt.imshow(hough_image, cmap='gray')
     plt.show()  
     
     """
+    #ransac_image = ransac(image, 2, 15)
+    image = numpy.array([[0 for _ in range(180)] for _ in range(180)])
+    for i in range(0,180, 1):
+        image[i][i] = 1
+        image[-i][i] = 1
+        image[1][i] = 1
+        image[i][1] = 1
+        
+    #image[5][5] = 255
+    ransac_image = ransac(image, 1, 15)
+    plt.imshow(image,cmap='gray')
+    plt.show()
     plt.imshow(ransac_image, cmap='gray')
     plt.show()
     """
