@@ -24,10 +24,13 @@ def hough(image, x_buckets, y_buckets):
             # rho index, center it
             rho_index = rho / rho_intervals + x_buckets // 2
             H_accumulator[int(rho_index)][theta_index] += 1
-    extractLines(H_accumulator, image, theta_intervals, rho_intervals)
-    return H_accumulator
+    for i in range(4):
+        extractLine(H_accumulator, image, theta_intervals, rho_intervals, points)
+        plt.imshow(image,cmap='gray')
+        plt.show()
+    return image
 
-def extractLines(H_accumulator, image, theta_intervals, rho_intervals):
+def extractLine(H_accumulator, image, theta_intervals, rho_intervals, points):
     max_value = -1
     max_x = 0 
     max_y = 0
@@ -37,22 +40,29 @@ def extractLines(H_accumulator, image, theta_intervals, rho_intervals):
                 max_value = H_accumulator[i][j]
                 max_x = i
                 max_y = j
-    theta = max_y * theta_intervals * numpy.pi / 180
+    theta = max_y * theta_intervals * numpy.pi / 180 
     rho = (max_x - H_accumulator.shape[0]//2) * rho_intervals
-    intercept = rho * numpy.sin(theta)
-    
-    print(max_x,max_y,theta,rho,intercept) 
-
-def drawline(image,slope,intercept):
-    
-    return None
+    drawPerpendicular(image,rho,theta, points)
+    H_accumulator[max_x][max_y] = 0
+ 
+def drawPerpendicular(image,rho,theta, points):
+    x = rho * numpy.cos(theta)
+    y = rho * numpy.sin(theta)
+    sin = numpy.sin(theta)
+    if sin != 0 and sin > .000001:
+        slope = -numpy.cos(theta) / sin
+        intercept = rho / sin
+        for i in range(image.shape[1]):
+            val = intercept + slope * i
+            if val >= 0 and val <= image.shape[0]:
+                image[int(val)][i] = 255
+    else:
+        for i in range(image.shape[0]):
+            if int(x) >= 0 and int(x) <= image.shape[1]:
+                image[i][int(x)] = 255
 
 if __name__ == "__main__":
     image = imageio.imread('canny.gif')
     print(image.shape)
     x = 11
-    #image = numpy.array([[0 for _ in range(x)]for _ in range(x)])
-    #image[5][5] = 255
-    image = hough(image,360,360)
-    plt.imshow(image,cmap='gray')
-    plt.show()
+    image = hough(image,1000,180)

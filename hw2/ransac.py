@@ -19,12 +19,6 @@ def ransac(image, threshold, inliers):
 
 def find_line(image,points, threshold, inliers):
     num_of_points = 2
-    """
-    error = .5
-    sample_count = 0
-    N = sys.maxsize
-    p = .95
-    """
     # keep track of the previous removal set, slope, and intercept
     removal_set = []
     slope = 0
@@ -58,16 +52,6 @@ def find_line(image,points, threshold, inliers):
             for point in points:
                 if abs(point[0] - second_point[0]) <= threshold:
                     removal_set.append(point)
-        """
-        # lower error, N, and increase step count
-        e = 1 - len(removal_set) / len(points)
-        if e != 1:
-            N = numpy.log(1-p) / numpy.log(1-(1-e)**num_of_points)
-        sample_count+=1
-        """
-        iterations+=1
-
-    print(len(removal_set), len(points), slope, intercept,iterations)
     # remove the points in the target set and highlight the inliers
     for point in removal_set:
         image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
