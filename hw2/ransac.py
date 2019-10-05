@@ -1,23 +1,28 @@
 import numpy
 import sys
 import matplotlib.pyplot as plt
+import imageio
 
 def ransac(image, threshold, inliers):
     points = []
     x_shape, y_shape = image.shape
     ret_image = numpy.copy(image)
+    max_value = numpy.amax(image)
     # remove the border since we need to place a
     # 3x3 block around them
     for i in range(1,x_shape-1):
         for j in range(1,y_shape-1):
             if ret_image[i][j] > 0:
                 points.append([i,j])
+    # only for visualization to plot on top of the original image
+    road = imageio.imread('road.png')
     # find four lines
     for i in range(4):
-        points, ret_image = find_line(ret_image, points, threshold, inliers)
+        points, ret_image = find_line(ret_image, points, threshold, inliers, max_value, road)
+    imageio.imsave('results/ransac_over_road.png',road)
     return ret_image
 
-def find_line(image,points, threshold, inliers):
+def find_line(image,points, threshold, inliers, max_value, road):
     num_of_points = 2
     # keep track of the previous removal set, slope, and intercept
     removal_set = []
@@ -55,7 +60,8 @@ def find_line(image,points, threshold, inliers):
                     
     # remove the points in the target set and highlight the inliers
     for point in removal_set:
-        image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
+        image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = max_value
+        road[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
         points.remove(point)
 
     # draw the line
@@ -63,8 +69,10 @@ def find_line(image,points, threshold, inliers):
         for i in range(image.shape[0]):
             target = slope * i + intercept
             if target >= 0 and target < image.shape[1]:
-                image[i][int(target)] = 255
+                image[i][int(target)] = max_value
+                road[i][int(target)] = 255
     else:
         for i in range(image.shape[1]):
-            image[intercept][i] = 255
+            image[intercept][i] = max_value
+            road [intercept][i] = 255
     return points,image
