@@ -8,8 +8,6 @@ def ransac(image, threshold, inliers):
     x_shape, y_shape = image.shape
     ret_image = numpy.copy(image)
     max_value = numpy.amax(image)
-    # remove the border since we need to place a
-    # 3x3 block around them
     for i in range(x_shape):
         for j in range(y_shape):
             if ret_image[i][j] > 0:
