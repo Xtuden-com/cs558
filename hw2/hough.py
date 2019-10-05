@@ -26,8 +26,6 @@ def hough(image, x_buckets, y_buckets):
             H_accumulator[int(rho_index)][theta_index] += 1
     for i in range(4):
         extractLine(H_accumulator, image, theta_intervals, rho_intervals, points)
-        plt.imshow(image,cmap='gray')
-        plt.show()
     return image
 
 def extractLine(H_accumulator, image, theta_intervals, rho_intervals, points):
@@ -66,3 +64,5 @@ if __name__ == "__main__":
     print(image.shape)
     x = 11
     image = hough(image,1000,180)
+    plt.imshow(image,cmap='gray')
+    plt.show()

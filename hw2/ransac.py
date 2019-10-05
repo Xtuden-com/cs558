@@ -52,6 +52,7 @@ def find_line(image,points, threshold, inliers):
             for point in points:
                 if abs(point[0] - second_point[0]) <= threshold:
                     removal_set.append(point)
+                    
     # remove the points in the target set and highlight the inliers
     for point in removal_set:
         image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255

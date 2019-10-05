@@ -14,12 +14,6 @@ def hessianDeterminant(image):
     image_xy = convulve2d(image_x,sobel_y)
     image_yy = convulve2d(image_y,sobel_y)
     ret_image = image_xx * image_yy - image_xy ** 2
-    # normalize the image by clipping negatives and capping maximums
-    max_value = numpy.amax(ret_image)
-    normalization = 255 / max_value
-    ret_image *= normalization
-    A = ret_image < 0
-    ret_image[A] = 0
     return ret_image
 
 def threshold(image, value):
