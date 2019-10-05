@@ -61,7 +61,7 @@ def drawPerpendicular(image,rho,theta, points,max_value, road):
     sin = numpy.sin(theta)
     cos = numpy.cos(theta)
     # if the cos is small enough just say it is 0 slope
-    if cos != 0 :
+    if cos != 0 and cos > .00001:
         slope = -sin / cos
         intercept = rho / cos
         for i in range(image.shape[0]):
