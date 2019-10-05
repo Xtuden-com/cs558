@@ -10,8 +10,8 @@ def ransac(image, threshold, inliers):
     max_value = numpy.amax(image)
     # remove the border since we need to place a
     # 3x3 block around them
-    for i in range(1,x_shape-1):
-        for j in range(1,y_shape-1):
+    for i in range(x_shape):
+        for j in range(y_shape):
             if ret_image[i][j] > 0:
                 points.append([i,j])
     # only for visualization to plot on top of the original image
@@ -60,8 +60,9 @@ def find_line(image,points, threshold, inliers, max_value, road):
                     
     # remove the points in the target set and highlight the inliers
     for point in removal_set:
-        image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = max_value
-        road[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
+        if (point[0] >= 1 and point[0] < image.shape[1]-1 and point[1] >= 1 and point[1] < image.shape[0]-1):
+            image[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = max_value
+            road[-1+point[0]:point[0]+2, -1+point[1]: point[1] + 2] = 255
         points.remove(point)
 
     # draw the line

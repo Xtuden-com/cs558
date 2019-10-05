@@ -12,6 +12,8 @@ def hough(image, x_buckets, y_buckets):
     max_rho = (image.shape[0] ** 2 + image.shape[1] ** 2) ** (1/2)
     # * 2 since we need to add all values by x_buckets//2 
     rho_intervals = max_rho * 2 / (x_buckets - 1) 
+    ret_image = numpy.copy(image)
+    image = ret_image
     points = []
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
@@ -59,7 +61,7 @@ def drawPerpendicular(image,rho,theta, points,max_value, road):
     sin = numpy.sin(theta)
     cos = numpy.cos(theta)
     # if the cos is small enough just say it is 0 slope
-    if cos != 0 and cos > .000001:
+    if cos != 0 :
         slope = -sin / cos
         intercept = rho / cos
         for i in range(image.shape[0]):
@@ -82,7 +84,7 @@ def drawPerpendicular(image,rho,theta, points,max_value, road):
                 road[int(x)][i] = 255
         # put a 3x3 box around a point on the line if it is within bounds
         for point in points:
-            if point[0]>=1 and point[0]<=image.shape[1]-1 and point[1]>=1 and image.shape[0]-1:
+            if point[0]>=1 and point[0]< image.shape[1]-1 and point[1]>=1 and point[1] < image.shape[0]-1:
                 if abs(point[0] - int(x)) <=2:
                     image[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = max_value
                     road[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = 255
