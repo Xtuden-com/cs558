@@ -67,17 +67,22 @@ def drawPerpendicular(image,rho,theta, points,max_value, road):
             if val >= 0 and val <= image.shape[1]:
                 image[i][int(val)] = max_value
                 road[i][int(val)] = 255
+        # put a 3x3 box around a point on the line if it is within bounds
+        for point in points:
+            if point[0]>=1 and point[0]<=image.shape[1]-1 and point[1]>=1 and image.shape[0]-1:
+                val = int(intercept + slope * point[0])
+                if abs(val-point[1]) <= 2:
+                    image[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = max_value
+                    road[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = 255
     #horizontal line
     else:
         for i in range(image.shape[1]):
             if int(x) >= 0 and int(x) <= image.shape[1]:
                 image[int(x)][i] = max_value
                 road[int(x)][i] = 255
-
-if __name__ == "__main__":
-    image = imageio.imread('canny.gif')
-    print(image.shape)
-    x = 11
-    image = hough(image,1000,180)
-    plt.imshow(image,cmap='gray')
-    plt.show()
+        # put a 3x3 box around a point on the line if it is within bounds
+        for point in points:
+            if point[0]>=1 and point[0]<=image.shape[1]-1 and point[1]>=1 and image.shape[0]-1:
+                if abs(point[0] - int(x)) <=2:
+                    image[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = max_value
+                    road[-1+point[0]:point[0]+2,-1+point[1]:point[1]+2] = 255
