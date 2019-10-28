@@ -5,6 +5,7 @@ import convolution
 import sys
 
 def initialCenters(image):
+    # centers are 50 apart starting at 25,25
     centers = []
     xsize, ysize, _ = image.shape
     xblocks = xsize // 50 
@@ -17,18 +18,22 @@ def initialCenters(image):
     return centers
 
 def getRGBGradient(image):
+    # get all color channels
     colorChannels = [image[:,:,0],image[:,:,1],image[:,:,2]]
     sobelx = numpy.array([[-1,0,1],[-2,0,2],[-1,0,1]])
     sobely = numpy.array([[1,2,1],[0,0,0],[-1,-2,-1]])
     magnitudeArray = []
     for image in colorChannels:
+        # gradient magnitude for each channel
         xgradient = convolution.convulve2d(image,sobelx)
         ygradient = convolution.convulve2d(image,sobely)
         currentMag , _ = gradient.gradientInfo(xgradient,ygradient,0)
         magnitudeArray.append(currentMag)
+    # total magnitude
     magnitude = (magnitudeArray[0] ** 2 + magnitudeArray[1] ** 2 + magnitudeArray[2] ** 2) ** (1/2)
     return magnitude
 
+# helper for local shift, find the smallest value in 3x3
 def findMinIndex(chunk):
     minValue = numpy.min(chunk)
     if chunk[1,1] == minValue:
@@ -44,6 +49,7 @@ def localShift(centers,magnitude):
         [x,y] = centers[i]
         if x!=0 and x!=len(magnitude) and y!=0 and y!=len(magnitude[0]):
             chunk = magnitude[x-1:x+2,y-1:y+2]
+            # move the center to the smallest value in a 3x3 around it
             [shiftx, shifty] = findMinIndex(chunk)
             centers[i] = [x + shiftx, y + shifty]
     return centers
@@ -54,6 +60,7 @@ def euclideanDistance(vector1,vector2):
         total += (vector1[i] - vector2[i]) ** 2
     return total ** (1/2)
 
+# average of the cluster position and color
 def getClusterAverage(clustersPosition, clustersColor):
     position = [0,0]
     color = [0,0,0]
@@ -88,10 +95,13 @@ def updateCentroids(centers,image):
             vector1 = [i/2,j/2,pixel[0],pixel[1],pixel[2]]
             for k in range(len(centers)):
                 [x,y] = centers[k]
+                # check if pixel is within 71 pixels of the target center
                 if ((x-i) ** 2 + (y-j) ** 2) ** (1/2) <= 71:
                     nextPixel = image[x,y]
+                    # divide pixel distances by 2
                     vector2 = [x/2,y/2,nextPixel[0],nextPixel[1],nextPixel[2]]
                     distance = euclideanDistance(vector1,vector2)
+                    # minimum distance
                     if distance < minValue:
                         minValue = distance
                         minIndex = k
@@ -101,6 +111,7 @@ def updateCentroids(centers,image):
         centers[i], colors[i] = getClusterAverage(clustersPosition[i], clustersColor[i])
     return centers,  colors, clustersPosition
 
+# check if the centers have not changed aka converged
 def converge(centers,previousCenter):
     for i in range(len(centers)):
         pixel1 = centers[i]
@@ -109,6 +120,7 @@ def converge(centers,previousCenter):
             return False
     return True
 
+# to color the centeroids
 def colorCenters(image,centers):
     xsize, ysize, _ = image.shape
     for center in centers:
@@ -118,6 +130,7 @@ def colorCenters(image,centers):
             image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [255,0,0]
     return image
 
+# fill in the clusters with color
 def fillClusters(clusters, colors, image):
     ret = numpy.zeros(image.shape)
     for i in range(len(colors)):
@@ -137,6 +150,8 @@ def drawBorders(image):
     currentColor = image[0][0]
     for i in range(xsize-1):
         for j in range(ysize):
+            # color black if below is not the same color or towards the right is not the same color
+            # only change the current color if it changes horizontally 
             if not equalColors(currentColor,image[i][j]):
                 ret[i][j] = [0,0,0]
                 currentColor = image[i][j]
@@ -146,6 +161,9 @@ def drawBorders(image):
                 ret[i][j] = image[i][j]
     return ret
 
+
+# added prints for debug/ let you know what stage you are in
+# average runtime is about 4 minutes
 def slic(image):
     centers = initialCenters(image)
     previousCenters = None
@@ -155,6 +173,7 @@ def slic(image):
     clusters = None
     colors = None
     print ('beginning slic')
+    # run for three iterations or if it centers have converged
     while iterations != 3:
         previousCenters = centers.copy()
         centers = localShift(centers,gradientMagnitude)
