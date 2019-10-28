@@ -115,34 +115,58 @@ def colorCenters(image,centers):
         center[0] = int(center[0])
         center[1] = int(center[1])
         if center[0]!=0 and center[0]!=xsize and center[1]!= 0 and center[1]!=ysize:
-            image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [0,0,0]
-    image = image / 255
-    plt.imshow(image)
-    plt.show()
+            image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [255,0,0]
+    return image
 
 def fillClusters(clusters, colors, image):
-    return None
+    ret = numpy.zeros(image.shape)
+    for i in range(len(colors)):
+        for point in clusters[i]:
+            ret[point[0],point[1]] = colors[i]
+    return ret
+
+def equalColors(color1,color2):
+    for i in range(3):
+        if color1[i]!=color2[i]:
+            return False
+    return True
 
 def drawBorders(image):
-    return None
+    xsize, ysize, _ = image.shape
+    ret = numpy.zeros(image.shape)
+    currentColor = image[0][0]
+    for i in range(xsize-1):
+        for j in range(ysize):
+            if not equalColors(currentColor,image[i][j]):
+                ret[i][j] = [0,0,0]
+                currentColor = image[i][j]
+            elif not equalColors(currentColor, image[i+1][j]):
+                ret[i][j] = [0,0,0]
+            else:
+                ret[i][j] = image[i][j]
+    return ret
 
 def slic(image):
     centers = initialCenters(image)
     previousCenters = None
+    print ('getting color channel magnitudes')
     gradientMagnitude = getRGBGradient(image)
     iterations = 0
     clusters = None
     colors = None
-    print ('begin')
+    print ('beginning slic')
     while iterations != 3:
         previousCenters = centers.copy()
         centers = localShift(centers,gradientMagnitude)
         centers, colors, clusters  = updateCentroids(centers,image)
-        print('iteration: ', iterations)
+        print('iteration: ', iterations + 1)
         if converge(centers,previousCenters):
             break
         iterations += 1
-    print('color now')
-    colorCenters(image,centers)
-    ret = fillClusters(image,clusters,colors)
-    return None
+    print('coloring in now')
+    ret = fillClusters(clusters,colors,image)
+    plt.imshow(ret/255)
+    plt.show()
+    ret = drawBorders(ret)
+    ret /= 255
+    return ret

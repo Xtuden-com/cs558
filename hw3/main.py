@@ -14,5 +14,6 @@ if __name__ == "__main__":
     plt.imshow(kmeansResult)
     plt.show()
     """
-    slic.slic(imageSlic)
-    
+    slicResult = slic.slic(imageSlic)
+    plt.imshow(slicResult)
+    plt.show()
