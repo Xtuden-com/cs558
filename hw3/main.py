@@ -1,12 +1,18 @@
 import imageio
 import matplotlib.pyplot as plt
-import kmeans
 import sys
 
+import kmeans
+import slic
+
 if __name__ == "__main__":
-    image = imageio.imread(sys.argv[1])
-    image = image.astype('float32')
+    imageKmeans = imageio.imread(sys.argv[1]).astype('float32')
     k = int(sys.argv[2])
-    kmeansResult = kmeans.kmeans(k,image)
+    imageSlic = imageio.imread(sys.argv[3]).astype('float32')
+    """
+    kmeansResult = kmeans.kmeans(k,imageKmeans)
     plt.imshow(kmeansResult)
     plt.show()
+    """
+    slic.slic(imageSlic)
+    

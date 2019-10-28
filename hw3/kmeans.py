@@ -12,6 +12,7 @@ def euclideanDistance(pixel1,pixel2):
 def clusterAverage(cluster):
     total = [0,0,0]
     length = len(cluster)
+    # in case one of the clusters is empty
     if length != 0:
         for i in range(length):
             total[0] += cluster[i][0]
@@ -63,12 +64,11 @@ def findCenters(k,image):
     
 def kmeans(k,image):
     centers, clusters_index = findCenters(k,image)
-    print(centers)
     ret = numpy.zeros(image.shape)
     for i in range(k):
         for pixel_loc in clusters_index[i]:
+            # divide by 255 because plt shows 0 to 255
             ret[pixel_loc[0]][pixel_loc[1]][0] = centers[i][0] / 255
             ret[pixel_loc[0]][pixel_loc[1]][1] = centers[i][1] / 255
             ret[pixel_loc[0]][pixel_loc[1]][2] = centers[i][2] / 255
-    print (ret)
     return ret
