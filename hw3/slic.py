@@ -2,6 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import gradient
 import convolution
+import sys
 
 def initialCenters(image):
     centers = []
@@ -29,7 +30,7 @@ def getRGBGradient(image):
     return magnitude
 
 def findMinIndex(chunk):
-    minValue = numpy.matrix.min(chunk)
+    minValue = numpy.min(chunk)
     if chunk[1,1] == minValue:
         return [0,0]
     for i in range(-1,2):
@@ -43,15 +44,87 @@ def localShift(centers,magnitude):
         [x,y] = centers[i]
         if x!=0 and x!=len(magnitude) and y!=0 and y!=len(magnitude[0]):
             chunk = magnitude[x-1:x+2,y-1:y+2]
-            [shiftx, shifty] = findMinIndex[chunk]
+            [shiftx, shifty] = findMinIndex(chunk)
             centers[i] = [x + shiftx, y + shifty]
     return centers
+
+def euclideanDistance(vector1,vector2):
+    total = 0
+    for i in range(len(vector1)):
+        total += (vector1[i] - vector2[i]) ** 2
+    return total ** (1/2)
+
+def getClusterAverage(clustersPosition):
+    position = [0,0]
+    length = len(clustersPosition)
+    if length != 0:
+        for i in range(len(clustersPosition)):
+            pixelIndex = clustersPosition[i]
+            position[0] += pixelIndex[0]
+            position[1] += pixelIndex[1]
+        position[0] /= length
+        position[1] /= length
+    return position
+
+def updateCentroids(centers,image):
+    xsize, ysize, _ = image.shape
+    clustersPosition = [[] for _ in range(len(centers))]
+    for i in range(xsize):
+        for j in range(ysize):
+            pixelCoordinates = [i,j]
+            pixel = image[i,j]
+            minValue = sys.maxsize
+            minIndex = 0
+            vector1 = [i/2,j/2,pixel[0],pixel[1],pixel[2]]
+            for k in range(len(centers)):
+                [x,y] = centers[k]
+                if ((x-i) ** 2 + (y-j) ** 2) ** (1/2) <= 71:
+                    nextPixel = image[x,y]
+                    vector2 = [x/2,y/2,nextPixel[0],nextPixel[1],nextPixel[2]]
+                    distance = euclideanDistance(vector1,vector2)
+                    if distance < minValue:
+                        minValue = distance
+                        minIndex = k
+            clustersPosition[minIndex].append(pixelCoordinates)
+            #clustersColor[minIndex].append(pixel)
+    for i in range(len(clustersPosition)):
+        centers[i] = int(getClusterAverage(clustersPosition[i]))
+    return centers, clustersPosition
+
+def converge(centers,previousCenter):
+    for i in range(len(centers)):
+        pixel1 = centers[i]
+        pixel2 = previousCenter[i]
+        if pixel1[0]!=pixel2[0] or pixel1[1]!=pixel2[1]:
+            return False
+    return True
+
+def colorCenters(image,centers):
+    xsize, ysize, _ = image.shape
+    for center in centers:
+        center[0] = int(center[0])
+        center[1] = int(center[1])
+        if center[0]!=0 and center[0]!=xsize and center[1]!= 0 and center[1]!=ysize:
+            image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [0,0,0]
+    image = image / 255
+    plt.imshow(image)
+    plt.show()
 
 def slic(image):
     centers = initialCenters(image)
     previousCenters = None
     gradientMagnitude = getRGBGradient(image)
-    iterations = 0 
-    #while iterations != 3 and (not previousCenter or not converge(centers,previousCenters)):
-    
+    iterations = 0
+    clusters = None
+    print ('begin')
+    while iterations != 3:
+        previousCenters = centers.copy()
+        centers = localShift(centers,gradientMagnitude)
+        centers,clusters  = updateCentroids(centers,image)
+        print('iteration: ', iterations)
+        if converge(centers,previousCenters):
+            break
+        iterations += 1
+    print('color now')
+    colorCenters(image,centers)
     return None
