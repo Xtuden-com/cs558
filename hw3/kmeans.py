@@ -3,7 +3,7 @@ import sys
 from random import randint
 
 def euclideanDistance(pixel1,pixel2):
-    R = (pixel1[0] - pixel2[0]) ** 2
+    R = (pixel1[0] - pixel212[0]) ** 2
     G = (pixel1[1] - pixel2[1]) ** 2
     B = (pixel1[2] - pixel2[2]) ** 2
     distance = (R + G + B) ** (1/2)
