@@ -54,21 +54,31 @@ def euclideanDistance(vector1,vector2):
         total += (vector1[i] - vector2[i]) ** 2
     return total ** (1/2)
 
-def getClusterAverage(clustersPosition):
+def getClusterAverage(clustersPosition, clustersColor):
     position = [0,0]
+    color = [0,0,0]
     length = len(clustersPosition)
     if length != 0:
         for i in range(len(clustersPosition)):
             pixelIndex = clustersPosition[i]
             position[0] += pixelIndex[0]
             position[1] += pixelIndex[1]
-        position[0] /= length
-        position[1] /= length
-    return position
+            pixelColor = clustersColor[i]
+            color[0] += pixelColor[0]
+            color[1] += pixelColor[1]
+            color[2] += pixelColor[2]
+        position[0] //= length
+        position[1] //= length
+        color[0] /= length
+        color[1] /= length
+        color[2] /= length
+    return position, color
 
 def updateCentroids(centers,image):
     xsize, ysize, _ = image.shape
     clustersPosition = [[] for _ in range(len(centers))]
+    clustersColor = [[] for _ in range(len(centers))]
+    colors = [[] for _ in range(len(centers))]
     for i in range(xsize):
         for j in range(ysize):
             pixelCoordinates = [i,j]
@@ -86,10 +96,10 @@ def updateCentroids(centers,image):
                         minValue = distance
                         minIndex = k
             clustersPosition[minIndex].append(pixelCoordinates)
-            #clustersColor[minIndex].append(pixel)
+            clustersColor[minIndex].append(pixel)
     for i in range(len(clustersPosition)):
-        centers[i] = int(getClusterAverage(clustersPosition[i]))
-    return centers, clustersPosition
+        centers[i], colors[i] = getClusterAverage(clustersPosition[i], clustersColor[i])
+    return centers,  colors, clustersPosition
 
 def converge(centers,previousCenter):
     for i in range(len(centers)):
@@ -110,21 +120,29 @@ def colorCenters(image,centers):
     plt.imshow(image)
     plt.show()
 
+def fillClusters(clusters, colors, image):
+    return None
+
+def drawBorders(image):
+    return None
+
 def slic(image):
     centers = initialCenters(image)
     previousCenters = None
     gradientMagnitude = getRGBGradient(image)
     iterations = 0
     clusters = None
+    colors = None
     print ('begin')
     while iterations != 3:
         previousCenters = centers.copy()
         centers = localShift(centers,gradientMagnitude)
-        centers,clusters  = updateCentroids(centers,image)
+        centers, colors, clusters  = updateCentroids(centers,image)
         print('iteration: ', iterations)
         if converge(centers,previousCenters):
             break
         iterations += 1
     print('color now')
     colorCenters(image,centers)
+    ret = fillClusters(image,clusters,colors)
     return None
