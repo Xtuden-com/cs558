@@ -3,7 +3,7 @@ import sys
 from random import randint
 
 def euclideanDistance(pixel1,pixel2):
-    R = (pixel1[0] - pixel212[0]) ** 2
+    R = (pixel1[0] - pixel2[0]) ** 2
     G = (pixel1[1] - pixel2[1]) ** 2
     B = (pixel1[2] - pixel2[2]) ** 2
     distance = (R + G + B) ** (1/2)
@@ -63,6 +63,7 @@ def findCenters(k,image):
     return centers, clusters_index
     
 def kmeans(k,image):
+    print('Start Kmeans')
     centers, clusters_index = findCenters(k,image)
     ret = numpy.zeros(image.shape)
     for i in range(k):
@@ -71,4 +72,5 @@ def kmeans(k,image):
             ret[pixel_loc[0]][pixel_loc[1]][0] = centers[i][0] / 255
             ret[pixel_loc[0]][pixel_loc[1]][1] = centers[i][1] / 255
             ret[pixel_loc[0]][pixel_loc[1]][2] = centers[i][2] / 255
+    print('End Kmeans')
     return ret

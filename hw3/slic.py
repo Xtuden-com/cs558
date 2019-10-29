@@ -181,7 +181,7 @@ def slic(image):
         print('iteration: ', iterations + 1)
         if converge(centers,previousCenters):
             break
-        iterations += 1
+        iterations +=  1
     print('coloring in now')
     ret = fillClusters(clusters,colors,image)
     plt.imshow(ret/255)
