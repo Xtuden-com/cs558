@@ -144,21 +144,34 @@ def equalColors(color1,color2):
             return False
     return True
 
-def drawBorders(image):
+def clusterContains(pixel1, pixel2, cluster,image):
+    pixel1Color = image[pixel1[0],pixel1[1]]
+    pixel2Color = image[pixel2[0],pixel2[1]]
+    pixel = image[cluster[0][0],cluster[0][1]]
+    if not equalColors(pixel1Color,pixel) or not equalColors(pixel2Color,pixel):
+        return False
+    contains1 = contains2 = False
+    for point in cluster:
+        if point[0] == pixel1[0] and point[1] == pixel1[1]:
+            contains1 = True
+        if point[0] == pixel2[0] and point[1] == pixel2[1]:
+            contains2 = True
+        if contains1 and contains2:
+            return True
+    return False
+
+def drawBorders(image,clusters):
     xsize, ysize, _ = image.shape
     ret = numpy.zeros(image.shape)
-    currentColor = image[0][0]
-    for i in range(xsize-1):
-        for j in range(ysize):
-            # color black if below is not the same color or towards the right is not the same color
-            # only change the current color if it changes horizontally 
-            if not equalColors(currentColor,image[i][j]):
-                ret[i][j] = [0,0,0]
-                currentColor = image[i][j]
-            elif not equalColors(currentColor, image[i+1][j]):
-                ret[i][j] = [0,0,0]
+    for cluster in clusters:
+        for pixel in cluster:
+            if pixel[0] < xsize - 1 and pixel[1] < ysize - 1:
+                if clusterContains([pixel[0]+1,pixel[1]],[pixel[0],pixel[1]+1],cluster,image):
+                    ret[pixel[0],pixel[1]] = image[pixel[0],pixel[1]]
+                else:
+                    ret[pixel[0],pixel[1]] = [0,0,0]
             else:
-                ret[i][j] = image[i][j]
+                ret[pixel[0],pixel[1]] = image[pixel[0],pixel[1]]
     return ret
 
 
@@ -187,6 +200,7 @@ def slic(image):
     ret = fillClusters(clusters,colors,image)
     plt.imshow(ret/255)
     plt.show()
-    ret = drawBorders(ret)
+    print('creating borders')
+    ret = drawBorders(ret,clusters)
     ret /= 255
     return ret
