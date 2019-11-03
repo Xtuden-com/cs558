@@ -165,6 +165,7 @@ def drawBorders(image):
 # added prints for debug/ let you know what stage you are in
 # average runtime is about 4 minutes
 def slic(image):
+    print ('beginning slic')
     centers = initialCenters(image)
     previousCenters = None
     print ('getting color channel magnitudes')
@@ -172,13 +173,13 @@ def slic(image):
     iterations = 0
     clusters = None
     colors = None
-    print ('beginning slic')
+    print('finished getting color channel magnitudes')
     # run for three iterations or if it centers have converged
     while iterations != 3:
+        print('iteration: ', iterations + 1)
         previousCenters = centers.copy()
         centers = localShift(centers,gradientMagnitude)
         centers, colors, clusters  = updateCentroids(centers,image)
-        print('iteration: ', iterations + 1)
         if converge(centers,previousCenters):
             break
         iterations +=  1
