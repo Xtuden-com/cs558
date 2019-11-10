@@ -59,8 +59,6 @@ def colorCenters(image,centers):
         center[1] = int(center[1])
         if center[0]!=0 and center[0]!=xsize and center[1]!= 0 and center[1]!=ysize:
             image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [1,0,0]
-        else:
-            image[center[0]][center[1]] = [1,0,0]
     return image
 
 def snic(image, compactnessFactor):
