@@ -96,11 +96,9 @@ def snic(image, compactnessFactor):
                         d = elementDistance(target,old,s,m)
                         e = (d, k, targetColor[0], targetColor[1], targetColor[2], moveX, moveY)
                         heapq.heappush(heap,e)
-    centers= []
     for i in range(xsize):
         for j in range(ysize):
             clusterIndex = labelMap[i][j]
             target = clusters[int(clusterIndex-1)]
             ret[i][j] = [target[2]/255,target[3]/255,target[4]/255]
-            centers.append([target[0],target[1]])
     return drawBorders(labelMap,ret)
