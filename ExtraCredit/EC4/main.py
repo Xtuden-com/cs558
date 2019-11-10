@@ -6,5 +6,6 @@ import snic
 if __name__ == "__main__":
     image = imageio.imread(sys.argv[1]).astype('float32')
     compression = int(sys.argv[2])
-    plt.imshow(snic.snic(image,compression))
+    ret = snic.snic(image,compression)
+    plt.imshow(ret)
     plt.show()

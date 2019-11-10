@@ -4,6 +4,7 @@ import gradient
 import convolution
 import sys
 import heapq
+import imageio
 
 def initialCenters(image):
     # centers are 50 apart starting at 25,25
@@ -50,6 +51,18 @@ def elementDistance(a,b,s,m):
     colorDistance = squaredDifference(a[2:],b[2:]) / m 
     return (pixelDistance + colorDistance) ** (1/2)
 
+# to color the centeroids
+def colorCenters(image,centers):
+    xsize, ysize, _ = image.shape
+    for center in centers:
+        center[0] = int(center[0])
+        center[1] = int(center[1])
+        if center[0]!=0 and center[0]!=xsize and center[1]!= 0 and center[1]!=ysize:
+            image[center[0]-1:center[0]+2,center[1]-1:center[1]+2] = [1,0,0]
+        else:
+            image[center[0]][center[1]] = [1,0,0]
+    return image
+
 def snic(image, compactnessFactor):
     m = compactnessFactor
     heap = []
@@ -90,6 +103,4 @@ def snic(image, compactnessFactor):
             clusterIndex = labelMap[i][j]
             target = clusters[int(clusterIndex-1)]
             ret[i][j] = [target[2]/255,target[3]/255,target[4]/255]
-    plt.imshow(ret)
-    plt.show()
     return drawBorders(labelMap,ret)
