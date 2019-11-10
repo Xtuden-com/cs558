@@ -32,13 +32,13 @@ def drawBorders(labelMap, ret):
 def updateCluster(clusters, index, element):
     cluster = clusters[index]
     # increment count
-    elements = cluster[5]
     cluster[5] += 1
+    elements = cluster[5]
     # the index must be an integer
-    cluster[0] = ((cluster[0] * elements) + element[0]) // cluster[5]
-    cluster[1] = ((cluster[1] * elements) + element[1])  // cluster[5]
+    cluster[0] = ((cluster[0] * (elements-1)) + element[0]) / cluster[5]
+    cluster[1] = ((cluster[1] * (elements-1)) + element[1])  / cluster[5]
     for i in range(2,5):
-        cluster[i] = ((cluster[i] * elements) + element[i]) / cluster[5]
+        cluster[i] = ((cluster[i] * (elements-1)) + element[i]) / cluster[5]
 
 def squaredDifference(a,b):
     total = 0
@@ -98,9 +98,11 @@ def snic(image, compactnessFactor):
                         d = elementDistance(target,old,s,m)
                         e = (d, k, targetColor[0], targetColor[1], targetColor[2], moveX, moveY)
                         heapq.heappush(heap,e)
+    centers= []
     for i in range(xsize):
         for j in range(ysize):
             clusterIndex = labelMap[i][j]
             target = clusters[int(clusterIndex-1)]
             ret[i][j] = [target[2]/255,target[3]/255,target[4]/255]
+            centers.append([target[0],target[1]])
     return drawBorders(labelMap,ret)
