@@ -57,7 +57,6 @@ def pixelClassification():
     skyCenters = KMeans(10).fit(sky).cluster_centers_
     nonSkyCenters = KMeans(10).fit(nonSky).cluster_centers_
     testImages = glob.glob('data/sky/sky_test?.jpg')
-    testImages.sort()
     for path in testImages:
         image = imageio.imread(path)
         x_size, y_size, _ = image.shape
