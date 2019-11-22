@@ -72,7 +72,7 @@ def findClass(image,trainingData, buckets):
         targetFeatures, targetClass = trainingData[i]
         distance = euclideanDistance(targetFeatures,features)
         heapq.heappush(maxHeap,(distance,targetClass))
-    retDistance, retClass = heapq.heappop(maxHeap)
+    _ , retClass = heapq.heappop(maxHeap)
     return retClass
 
 

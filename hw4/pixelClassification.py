@@ -38,13 +38,13 @@ def nearestIsSky(pixel,skyCenters,nonSkyCenters):
         return False
     return True
 
-if __name__ == "__main__":
+def pixelClassification():
     skyColor = [1,1,1]
     mask = imageio.imread("data/sky/sky_train_gimp.jpg")
     trainingImage = imageio.imread("data/sky/sky_train.jpg")
     sky, nonSky = seperateSets(trainingImage,mask)
     skyCenters = KMeans(10).fit(sky).cluster_centers_
-    nonSkyCenters = KMeans(10).fit(nonSky).cluster_centers_[:,1]
+    nonSkyCenters = KMeans(10).fit(nonSky).cluster_centers_
     testImages = glob.glob('data/sky/sky_test?.jpg')
     testImages.sort()
     for path in testImages:
@@ -58,6 +58,8 @@ if __name__ == "__main__":
                     ret[i][j] = skyColor 
                 else:
                     ret[i][j] = numpy.array(pixel) / 255
-        print('here')
         plt.imshow(ret)
         plt.show()
+
+if __name__ == "__main__":
+    pixelClassification()
