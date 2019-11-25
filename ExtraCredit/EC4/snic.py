@@ -39,6 +39,7 @@ def updateCluster(clusters, index, element):
     cluster[1] = ((cluster[1] * (elements-1)) + element[1])  / cluster[5]
     for i in range(2,5):
         cluster[i] = ((cluster[i] * (elements-1)) + element[i]) / cluster[5]
+    return clusters[index]
 
 def squaredDifference(a,b):
     total = 0
@@ -84,13 +85,12 @@ def snic(image, compactnessFactor):
         distance, k, colorR, colorG, colorB, x, y = target
         if labelMap[x][y] == 0: 
             labelMap[x][y] = k           
-            updateCluster(clusters, k-1, [x,y,colorR,colorG,colorB])
+            old = updateCluster(clusters, k-1, [x,y,colorR,colorG,colorB])
             for move in directions:
                 moveX = x + move[0]
                 moveY = y + move[1]
                 if moveX >= 0 and moveX < xsize and moveY >= 0 and moveY < ysize:
                     if labelMap[moveX][moveY] == 0:
-                        old = [x,y, colorR,colorG, colorB]
                         targetColor = image[moveX,moveY]
                         target = [moveX, moveY, targetColor[0], targetColor[1],targetColor[2]]
                         d = elementDistance(target,old,s,m)
