@@ -5,6 +5,7 @@ import imageio
 from skimage import exposure,img_as_float
 import copy
 
+# assign descriptors to the index of center they converged to
 def indexDescriptors(means):
     means = means.tolist()
     swap = []
@@ -13,8 +14,10 @@ def indexDescriptors(means):
     means = copy.deepcopy(swap)
     uniqueValues = list(set(swap))
     ret = []
+    # iterate through each descriptor
     for i in range(len(means)):
         target = means[i]
+        # if the descriptor equals the center assign the index value
         for j in range(len(uniqueValues)):
             center = uniqueValues[j]
             if target == center:
@@ -75,13 +78,13 @@ def cluster(path,maxDistance):
         targetIndex = indexValues[i]
         imageSets[targetIndex].append(images[i])
     for i in range(numIndex):
-        print('Cluster ', i, ': ')
+        print('Cluster ', i, ': ', end='')
         for j in range(len(imageSets[i])):
             print(imageSets[i][j][1],', ', end='')
         print('')
 
 if __name__ == "__main__":
     print('Data Set 1:')
-    cluster("data1/*.jpg",1800000)
+    cluster("data1/*.jpg",1880000)
     print('Data Set 2:')
-    cluster("data2/*.jpg",1880000)
+    cluster("data2/*.jpg",1920000)
